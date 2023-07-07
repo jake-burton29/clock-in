@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "639097874521",
+    "project_id": "clockin-9dbe0",
+    "storage_bucket": "clockin-9dbe0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639097874521:android:7177e6aca8eb1767e42948",
+        "android_client_info": {
+          "package_name": "com.example.clock_in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639097874521-13l4k9u8e74vaut5aeafvvoqamqd7iv6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj07npZpW6woX4IWzbx-pZMMMEtOTlPhE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639097874521-13l4k9u8e74vaut5aeafvvoqamqd7iv6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "639097874521-odpa13r165r2mvcgto9raatv8vsctuqe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.clockIn"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
