@@ -18,6 +18,39 @@ class AuthService {
   // Internal constructor
   AuthService._internal();
 
+  Future<UserCredential> createUser(String email, String password) async {
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await _db.collection('roles').doc(userCredential.user!.uid).set({
+      'email': email,
+      'isAdmin': false,
+      'isActive': true,
+    });
+    return userCredential;
+  }
+
+  Future<bool> deactivateUser(String email) async {
+    try {
+      await _db.collection('roles').doc(email).update({'isActive': false});
+      return true; // Return true if the update operation is successful
+    } catch (error) {
+      print('Error deactivating user: $error');
+      return false; // Return false if there's an error during the update operation
+    }
+  }
+
+  Future<bool> reactivateUser(String email) async {
+    try {
+      await _db.collection('roles').doc(email).update({'isActive': true});
+      return true; // Return true if the update operation is successful
+    } catch (error) {
+      print('Error deactivating user: $error');
+      return false; // Return false if there's an error during the update operation
+    }
+  }
+
   Future<UserCredential?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -42,28 +75,41 @@ class AuthService {
   Future<UserData?> getUserData(String uid, String email) async {
     try {
       DocumentSnapshot userDoc = await _db.collection('roles').doc(uid).get();
+
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        bool isAdmin = userData['isAdmin'] ?? false;
-        String userEmail = userData['email'] ?? '';
 
-        // Check if the email in the document matches the passed email
-        if (userEmail != email) {
+        if (userData['email'] is! String || userData['email'] != email) {
           throw Exception('Email mismatch');
         }
+        if (userData['isAdmin'] is! bool) {
+          throw Exception('isAdmin should be a boolean');
+        }
+
+        if (userData['isActive'] is! bool) {
+          throw Exception('isActive should be a boolean');
+        }
+
+        if (!userData['isActive']) {
+          throw Exception('User is not active');
+        }
+
+        bool isAdmin = userData['isAdmin'] ?? false;
+        String userEmail = userData['email'] ?? '';
+        bool isActive = userData['isActive'] ?? true;
 
         // Create a UserData object with the necessary fields
         UserData user = UserData(
           uid: uid,
           email: userEmail,
           isAdmin: isAdmin,
+          isActive: isActive, // Add this
           // Add any other necessary fields from the userDoc
         );
 
         return user;
       } else {
-        // User document does not exist
-        return null;
+        throw Exception('User document does not exist');
       }
     } catch (e) {
       print(e);
@@ -76,8 +122,18 @@ class AuthService {
       if (user == null) {
         return null;
       } else {
-        return await getUserData(user.uid, user.email!); // Add the '!' operator
+        return await getUserData(user.uid, user.email!);
       }
     });
+  }
+
+  Future<List<UserData>> getUserList() async {
+    final userCollection = FirebaseFirestore.instance
+        .collection('roles'); // use the correct collection name
+    final snapshot = await userCollection.get();
+
+    return snapshot.docs.map((doc) {
+      return UserData.fromMap(doc.data(), doc.id);
+    }).toList();
   }
 }

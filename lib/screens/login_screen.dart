@@ -13,7 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
-  String _username = '';
+  String _email = '';
   String _password = '';
 
   Future<void> _loginButtonPressed() async {
@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: _username,
+          email: _email,
           password: _password,
         );
         // Initialize AuthService
@@ -34,6 +34,14 @@ class _LoginScreenState extends State<LoginScreen> {
         if (userData == null) {
           throw Exception('User data not found.');
         }
+
+        // Check if the user is active
+        if (!userData.isActive) {
+          // If not, display an error message
+          print('This user is not active.');
+          return;
+        }
+
         // Navigate to the clock in/out screen, passing the UserData
         Navigator.push(
           context,
@@ -72,10 +80,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Username'),
+                    decoration: InputDecoration(labelText: 'Email'),
+                    autocorrect: false,
+                    enableSuggestions: false,
                     validator: (value) =>
-                        value!.isEmpty ? 'Please enter your username' : null,
-                    onSaved: (value) => _username = value!,
+                        value!.isEmpty ? 'Please enter your email' : null,
+                    onSaved: (value) => _email = value!,
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: 'Password'),

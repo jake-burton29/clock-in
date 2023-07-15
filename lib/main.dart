@@ -34,6 +34,44 @@ class ClockInApp extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         title: 'Clock In App',
+        theme: ThemeData(
+          // Light theme
+          brightness: Brightness.light,
+          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.light(
+            primary: Colors.blue[800]!,
+            secondary: Colors.amber,
+            error: Colors.red,
+            onPrimary: Colors.white,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          fontFamily: 'Roboto',
+          textTheme: TextTheme(
+            displayLarge:
+                TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+            titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+            bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Roboto'),
+          ),
+        ),
+        darkTheme: ThemeData(
+          // Dark theme
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.dark(
+            primary: Colors.blue[700]!,
+            secondary: Colors.amber,
+            error: Colors.red,
+            onPrimary: Colors.white,
+          ),
+          scaffoldBackgroundColor: Colors.grey[900],
+          fontFamily: 'Roboto',
+          textTheme: TextTheme(
+            displayLarge:
+                TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+            titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+            bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Roboto'),
+          ),
+        ),
         initialRoute: '/',
         routes: {
           '/': (context) => LoginScreen(),

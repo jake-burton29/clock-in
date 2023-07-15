@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../models/user_data.dart';
 import '../models/work_hours.dart';
 import '../services/work_hours_service.dart';
-import '../services/auth_services.dart';
+import 'package:intl/intl.dart';
 
 class ClockInOutScreen extends StatefulWidget {
   final UserData? user; // change User to UserData
 
-  ClockInOutScreen({this.user}); // remove required from this.user
+  ClockInOutScreen({required this.user});
 
   @override
   _ClockInOutScreenState createState() => _ClockInOutScreenState();
@@ -16,11 +16,46 @@ class ClockInOutScreen extends StatefulWidget {
 
 class _ClockInOutScreenState extends State<ClockInOutScreen> {
   final WorkHoursService _workHoursService = WorkHoursService();
-  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _showDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _clockIn() async {
+    await _workHoursService.clockIn(widget.user!.uid);
+
+    String formattedClockOut =
+        DateFormat('yyyy-MM-dd hh:mm:ss a').format(DateTime.now());
+    _showDialog("Clocked In", "You have clocked in at $formattedClockOut");
+  }
+
+  Future<void> _clockOut(String docId) async {
+    final hours = await _workHoursService.clockOut(docId);
+    _showDialog(
+      "Clocked Out",
+      "You have clocked out. Total hours worked today: $hours",
+    );
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -32,18 +67,11 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
     }
   }
 
-  Future<void> _clockIn() async {
-    await _workHoursService.clockIn(widget.user!.uid);
-  }
-
-  Future<void> _clockOut(String docId) async {
-    await _workHoursService.clockOut(docId);
-  }
-
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Clock In/Out Screen'),
+        automaticallyImplyLeading: false,
       ),
       body: StreamBuilder<WorkHours?>(
         stream: _workHoursService.getCurrentWorkHours(widget.user!.uid),

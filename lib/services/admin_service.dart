@@ -28,6 +28,7 @@ class AdminService {
         // Add a document to the 'roles' collection to indicate that this user is an admin
         await firestore.collection('roles').doc(userCredential.user!.uid).set({
           'isAdmin': true,
+          'isActive': true,
           'email': userCredential.user?.email,
         });
       }
