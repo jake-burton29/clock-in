@@ -32,7 +32,7 @@ class _AdminScreenState extends State<AdminScreen> {
   Future<void> initUserList() async {
     userList = await _authService.getUserList();
     if (userList != null && userList!.isNotEmpty) {
-      print('User List: $userList'); // Print user list to console
+      print('User List: $userList');
       setState(() {
         selectedUser = userList![0];
       });
@@ -135,8 +135,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   style: TextStyle(fontSize: 18),
                 ),
               Container(
-                width:
-                    screenWidth * 0.4, // Fields take up about 40% screen width
+                width: screenWidth * 0.4,
                 child: Column(
                   children: [
                     TextField(
@@ -153,7 +152,7 @@ class _AdminScreenState extends State<AdminScreen> {
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                mainAxisSize: MainAxisSize.min, // arrange buttons in a row
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton(
                     child: Text('Create New User'),

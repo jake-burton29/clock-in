@@ -18,15 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _loginButtonPressed() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Save our form
+      _formKey.currentState!.save();
 
       try {
+        AuthService authService = AuthService();
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _email,
           password: _password,
         );
-        // Initialize AuthService
-        AuthService authService = AuthService();
 
         // Get UserData
         UserData? userData = await authService.getUserData(
@@ -35,14 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
           throw Exception('User data not found.');
         }
 
-        // Check if the user is active
         if (!userData.isActive) {
-          // If not, display an error message
           print('This user is not active.');
           return;
         }
 
-        // Navigate to the clock in/out screen, passing the UserData
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -52,8 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           print('No user found for that email.');
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: const Text('No user found for that email')));
         } else if (e.code == 'wrong-password') {
           print('Wrong password provided for that user.');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: const Text('Wrong password provided for this user')));
         }
       }
     }
@@ -67,11 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
         automaticallyImplyLeading: false,
       ),
       body: Center(
-        // Center widget added here
         child: Container(
-          // Container widget added here
-          width: MediaQuery.of(context).size.width *
-              0.75, // Set width to 75% of the screen width
+          width: MediaQuery.of(context).size.width * 0.75,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Form(

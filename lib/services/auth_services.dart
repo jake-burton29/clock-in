@@ -7,47 +7,58 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Singleton instance
   static final AuthService _singleton = AuthService._internal();
 
-  // Factory constructor that returns the singleton instance
   factory AuthService() {
     return _singleton;
   }
 
-  // Internal constructor
   AuthService._internal();
-
   Future<UserCredential> createUser(String email, String password) async {
-    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    await _db.collection('roles').doc(userCredential.user!.uid).set({
-      'email': email,
-      'isAdmin': false,
-      'isActive': true,
-    });
-    return userCredential;
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await _db.collection('roles').doc(userCredential.user!.uid).set({
+        'email': email,
+        'isAdmin': false,
+        'isActive': true,
+      });
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        throw Exception(
+            'The email address is already in use by another account.');
+      } else {
+        throw Exception(
+            'An error occurred while creating the account: ${e.code}');
+      }
+    } catch (e) {
+      throw Exception('An unexpected error occurred: $e');
+    }
   }
 
   Future<bool> deactivateUser(String email) async {
     try {
       await _db.collection('roles').doc(email).update({'isActive': false});
-      return true; // Return true if the update operation is successful
+      return true;
     } catch (error) {
       print('Error deactivating user: $error');
-      return false; // Return false if there's an error during the update operation
+      return false;
     }
   }
 
   Future<bool> reactivateUser(String email) async {
     try {
       await _db.collection('roles').doc(email).update({'isActive': true});
-      return true; // Return true if the update operation is successful
+      return true;
     } catch (error) {
       print('Error deactivating user: $error');
-      return false; // Return false if there's an error during the update operation
+      return false;
     }
   }
 
@@ -59,8 +70,12 @@ class AuthService {
       );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      print(e.message);
-      return null;
+      if (e.code == 'user-not-found') {
+        throw Exception('No user found for this email.');
+      } else if (e.code == 'wrong-password') {
+        throw Exception('Wrong password provided for this user.');
+      }
+      throw Exception(e.message ?? 'An unknown error occurred.');
     }
   }
 
@@ -98,13 +113,11 @@ class AuthService {
         String userEmail = userData['email'] ?? '';
         bool isActive = userData['isActive'] ?? true;
 
-        // Create a UserData object with the necessary fields
         UserData user = UserData(
           uid: uid,
           email: userEmail,
           isAdmin: isAdmin,
-          isActive: isActive, // Add this
-          // Add any other necessary fields from the userDoc
+          isActive: isActive,
         );
 
         return user;
@@ -128,8 +141,7 @@ class AuthService {
   }
 
   Future<List<UserData>> getUserList() async {
-    final userCollection = FirebaseFirestore.instance
-        .collection('roles'); // use the correct collection name
+    final userCollection = FirebaseFirestore.instance.collection('roles');
     final snapshot = await userCollection.get();
 
     return snapshot.docs.map((doc) {

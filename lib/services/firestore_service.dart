@@ -1,8 +1,4 @@
-// Function to clock in
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FirestoreService {
   final CollectionReference workHoursCollection =

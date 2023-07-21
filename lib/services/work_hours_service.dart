@@ -26,15 +26,11 @@ class WorkHoursService {
   Future<Object> clockOut(String docId) async {
     Timestamp clockOut = Timestamp.now();
 
-    // Get the clockIn time from the document
     DocumentSnapshot doc = await workHoursRef.doc(docId).get();
     Timestamp clockIn = doc.get('clockIn');
 
-    // Calculate total hours
     double totalHours =
         clockOut.toDate().difference(clockIn.toDate()).inMinutes / 60;
-
-    // Update the document
 
     String formattedClockOut =
         DateFormat('yyyy-MM-dd hh:mm:ss a').format(clockOut.toDate());

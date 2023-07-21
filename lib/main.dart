@@ -75,8 +75,8 @@ class ClockInApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => LoginScreen(),
-          '/clock': (context) => ClockInOutScreen(
-              user: Provider.of<UserData?>(context)), // provide the user
+          '/clock': (context) =>
+              ClockInOutScreen(user: Provider.of<UserData?>(context)),
           '/summary': (context) => SummaryScreen(),
           '/admin': (context) => AdminScreen(),
         },
