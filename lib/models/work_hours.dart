@@ -15,7 +15,6 @@ class WorkHours {
     this.totalHours,
   });
 
-  // Convert a WorkHours object into a map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -25,7 +24,6 @@ class WorkHours {
     };
   }
 
-// Create a WorkHours object from a Firestore snapshot
   static WorkHours fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
@@ -33,7 +31,6 @@ class WorkHours {
     if (data['totalHours'] != null) {
       totalHours = double.tryParse(data['totalHours'].toString());
       if (totalHours == null) {
-        // Log a warning, throw an error, or handle this case however you like.
         print(
             'Warning: Could not parse totalHours from data: ${data['totalHours']}');
       }

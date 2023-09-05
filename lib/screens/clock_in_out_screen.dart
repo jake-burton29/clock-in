@@ -6,7 +6,7 @@ import '../services/work_hours_service.dart';
 import 'package:intl/intl.dart';
 
 class ClockInOutScreen extends StatefulWidget {
-  final UserData? user; // change User to UserData
+  final UserData? user;
 
   ClockInOutScreen({required this.user});
 
@@ -94,7 +94,6 @@ class _ClockInOutScreenState extends State<ClockInOutScreen> {
                     ElevatedButton(
                       child: Text('Admin'),
                       onPressed: () {
-                        // Navigate to Admin page
                         Navigator.pushNamed(context, '/admin');
                       },
                     )

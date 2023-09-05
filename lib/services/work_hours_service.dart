@@ -54,18 +54,6 @@ class WorkHoursService {
             : null);
   }
 
-  // Future<List<WorkHours>> getWorkHoursInRange(
-  //     DateTime start, DateTime end) async {
-  //   QuerySnapshot snapshot = await workHoursRef
-  //       .where('date',
-  //           isGreaterThanOrEqualTo: start.toUtc().toString().substring(0, 10))
-  //       .where('date',
-  //           isLessThanOrEqualTo: end.toUtc().toString().substring(0, 10))
-  //       .get();
-
-  //   return snapshot.docs.map((doc) => WorkHours.fromSnapshot(doc)).toList();
-  // }
-
   Future<List<WorkHours>> getWorkHoursInRangeForEmployee(
       String userId, DateTime start, DateTime end) async {
     QuerySnapshot snapshot = await workHoursRef

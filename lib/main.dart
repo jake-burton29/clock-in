@@ -8,9 +8,9 @@ import 'screens/admin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'services/admin_service.dart';
-import 'package:provider/provider.dart'; // import Provider
-import '../models/user_data.dart'; // import your UserData model
-import '../services/auth_services.dart'; // import AuthService
+import 'package:provider/provider.dart';
+import '../models/user_data.dart';
+import '../services/auth_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +54,6 @@ class ClockInApp extends StatelessWidget {
           ),
         ),
         darkTheme: ThemeData(
-          // Dark theme
           brightness: Brightness.dark,
           primarySwatch: Colors.blue,
           colorScheme: ColorScheme.dark(
