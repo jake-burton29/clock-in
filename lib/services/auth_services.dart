@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user_data.dart';
+import '../models/work_hours.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -147,5 +148,23 @@ class AuthService {
     return snapshot.docs.map((doc) {
       return UserData.fromMap(doc.data(), doc.id);
     }).toList();
+  }
+
+  Future<void> updateClockInOutTimes(
+    WorkHours workHours,
+    DateTime clockIn,
+    DateTime clockOut,
+  ) async {
+    double totalHours = clockOut.difference(clockIn).inMinutes / 60;
+    try {
+      await _db.collection('work_hours').doc(workHours.id).update({
+        'clockIn': clockIn,
+        'clockOut': clockOut,
+        'totalHours': totalHours.toStringAsFixed(2),
+      });
+    } catch (error) {
+      print('Error updating clock-in and clock-out times: $error');
+      throw Exception('An error occurred while updating times.');
+    }
   }
 }

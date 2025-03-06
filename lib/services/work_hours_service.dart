@@ -66,4 +66,8 @@ class WorkHoursService {
 
     return snapshot.docs.map((doc) => WorkHours.fromSnapshot(doc)).toList();
   }
+
+  Stream<DocumentSnapshot> workHoursStream(WorkHours workHours) {
+    return _workHoursCollection.doc(workHours.id).snapshots();
+  }
 }

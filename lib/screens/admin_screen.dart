@@ -1,3 +1,4 @@
+import 'package:clock_in/services/admin_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +6,7 @@ import '../models/user_data.dart';
 import '../models/work_hours.dart';
 import '../services/auth_services.dart';
 import '../services/work_hours_service.dart';
+import 'edit_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -39,6 +41,32 @@ class _AdminScreenState extends State<AdminScreen> {
     }
   }
 
+  // Callback to update clock-in time
+  void updateClockIn(DateTime newClockIn) {
+    setState(() {
+      if (selectedUser != null && employeeHours != null) {
+        for (var workHours in employeeHours!) {
+          if (workHours.userId == selectedUser!.uid) {
+            workHours.clockIn = newClockIn;
+          }
+        }
+      }
+    });
+  }
+
+  // Callback to update clock-out time
+  void updateClockOut(DateTime newClockOut) {
+    setState(() {
+      if (selectedUser != null && employeeHours != null) {
+        for (var workHours in employeeHours!) {
+          if (workHours.userId == selectedUser!.uid) {
+            workHours.clockOut = newClockOut;
+          }
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -69,6 +97,45 @@ class _AdminScreenState extends State<AdminScreen> {
                     });
                   },
                 ),
+              ElevatedButton(
+                child: Text("Edit TimeStamps"),
+                onPressed: selectedUser == null
+                    ? null
+                    : () async {
+                        dateRange = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime(DateTime.now().year - 5),
+                          lastDate: DateTime(DateTime.now().year + 5),
+                        );
+
+                        if (dateRange != null) {
+                          employeeHours = await _workHoursService
+                              .getWorkHoursInRangeForEmployee(selectedUser!.uid,
+                                  dateRange!.start, dateRange!.end);
+                          totalHoursInPayPeriod = employeeHours
+                              ?.map((workHours) => workHours.totalHours ?? 0)
+                              .fold(
+                                  0,
+                                  (previous, current) =>
+                                      (previous ?? 0) + (current));
+
+                          setState(() {});
+                          if (employeeHours != null) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => EditScreen(
+                                selectedUser: selectedUser!,
+                                employeeHours: employeeHours,
+                                onEdit: () {
+                                  // This callback gets called when editing is done
+                                  // You can refresh data here
+                                  setState(() {});
+                                },
+                              ),
+                            ));
+                          }
+                        }
+                      },
+              ),
               ElevatedButton(
                 child: Text("Select Date Range"),
                 onPressed: selectedUser == null

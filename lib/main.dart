@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/login_screen.dart';
 import 'screens/clock_in_out_screen.dart';
 import 'screens/summary_screen.dart';
+import 'screens/edit_screen.dart';
 import 'screens/admin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
